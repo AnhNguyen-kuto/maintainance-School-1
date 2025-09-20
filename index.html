@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý bảo trì máy tính</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <h1>🖥️ Chọn máy cần bảo trì</h1>
+
+    <!-- Phần hiển thị hai phòng và 40 máy mỗi phòng -->
+    <div id="rooms">
+      <div class="room" data-room="Phòng 1">
+        <h2>Phòng 1 (40 máy)</h2>
+        <div class="machines"></div>
+      </div>
+      <div class="room" data-room="Phòng 2">
+        <h2>Phòng 2 (40 máy)</h2>
+        <div class="machines"></div>
+      </div>
+    </div>
+
+    <!-- Form lên lịch bảo trì -->
+    <h2>📝 Lên lịch bảo trì</h2>
+    <form id="scheduleForm">
+      <div class="field">
+        <label>Các máy đã chọn:</label>
+        <input type="text" id="selectedMachines" readonly>
+      </div>
+      <div class="field">
+        <label>Tổng số máy:</label>
+        <input type="text" id="machineCount" readonly>
+      </div>
+      <div class="field">
+        <label for="status">Trạng thái bảo trì:</label>
+        <select id="status">
+          <option value="Chờ xử lý">Chờ xử lý</option>
+          <option value="Đang sửa">Đang sửa</option>
+          <option value="Hoàn thành">Hoàn thành</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="schedule">Ngày giờ bảo trì:</label>
+        <input type="datetime-local" id="schedule">
+      </div>
+      <button type="submit">Lên lịch bảo trì</button>
+    </form>
+
+    <!-- Danh sách lịch đã lên -->
+    <h2>📅 Lịch bảo trì đã lưu</h2>
+    <ul id="scheduleList"></ul>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

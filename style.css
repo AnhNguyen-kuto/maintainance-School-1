@@ -1,0 +1,89 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7f8;
+  margin: 0; padding: 20px;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+h1, h2 {
+  text-align: center;
+  color: #333;
+}
+#rooms {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.room {
+  width: 48%;
+}
+.room h2 {
+  margin-bottom: 10px;
+  text-align: left;
+}
+.machines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.machine {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+.machine.selected {
+  background: #0077cc;
+  color: #fff;
+  border-color: #0077cc;
+}
+.field {
+  margin-bottom: 12px;
+}
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+input[readonly] {
+  background: #eee;
+}
+input, select, button {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+button {
+  background: #28a745;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+button:hover {
+  background: #218838;
+}
+#scheduleList {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+#scheduleList li {
+  background: #eef;
+  padding: 8px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+}
