@@ -11,7 +11,6 @@
 
     <h1>🖥️ Chọn máy cần bảo trì</h1>
 
-    <!-- Phần hiển thị hai phòng và 40 máy mỗi phòng -->
     <div id="rooms">
       <div class="room" data-room="Phòng 1">
         <h2>Phòng 1 (40 máy)</h2>
@@ -23,7 +22,6 @@
       </div>
     </div>
 
-    <!-- Form lên lịch bảo trì -->
     <h2>📝 Lên lịch bảo trì</h2>
     <form id="scheduleForm">
       <div class="field">
@@ -44,19 +42,20 @@
       </div>
       <div class="field">
         <label for="schedule">Ngày giờ bảo trì:</label>
-        <input type="datetime-local" id="schedule">
+        <input type="datetime-local" id="schedule" required>
       </div>
       <button type="submit">Lên lịch bảo trì</button>
     </form>
 
-    <!-- Danh sách lịch đã lên -->
     <h2>📅 Lịch bảo trì đã lưu</h2>
     <ul id="scheduleList"></ul>
+
+    <div class="export">
+      <button id="exportCsv">📥 Xuất file CSV</button>
+    </div>
 
   </div>
 
   <script src="script.js"></script>
-  <script src="Code.gs"></script>
 </body>
-
 </html>

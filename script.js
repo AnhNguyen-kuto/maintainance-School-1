@@ -1,29 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const roomsDiv       = document.getElementById("rooms");
-  const machinesElems  = roomsDiv.querySelectorAll(".machines");
-  const selectedInput  = document.getElementById("selectedMachines");
-  const countInput     = document.getElementById("machineCount");
-  const form           = document.getElementById("scheduleForm");
-  const statusSelect   = document.getElementById("status");
-  const scheduleInput  = document.getElementById("schedule");
-  const scheduleList   = document.getElementById("scheduleList");
+  const roomsDiv      = document.getElementById("rooms");
+  const selInput      = document.getElementById("selectedMachines");
+  const cntInput      = document.getElementById("machineCount");
+  const form          = document.getElementById("scheduleForm");
+  const statusSelect  = document.getElementById("status");
+  const scheduleInput = document.getElementById("schedule");
+  const scheduleList  = document.getElementById("scheduleList");
+  const exportBtn     = document.getElementById("exportCsv");
 
+  let records = JSON.parse(localStorage.getItem("records") || "[]");
   let selectedMachines = [];
 
- 
-  // 1. Khởi tạo 40 máy cho mỗi phòng
-  machinesElems.forEach(machinesDiv => {
-    const roomName = machinesDiv.parentElement.dataset.room;
+  // Khởi tạo biểu tượng 40 máy cho mỗi phòng
+  roomsDiv.querySelectorAll(".machines").forEach(div => {
+    const roomName = div.parentElement.dataset.room;
     for (let i = 1; i <= 40; i++) {
       const span = document.createElement("span");
-      span.className = "machine";
+      span.className   = "machine";
       span.textContent = "💻";
-      span.dataset.id = `${roomName}-${i}`;
-      machinesDiv.appendChild(span);
+      span.dataset.id  = `${roomName}-${i}`;
+      div.appendChild(span);
     }
   });
 
-  // 2. Bắt sự kiện click để chọn/bỏ chọn máy
+  // Chọn / bỏ chọn máy
   roomsDiv.addEventListener("click", e => {
     if (!e.target.classList.contains("machine")) return;
     const id = e.target.dataset.id;
@@ -32,24 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       selectedMachines = selectedMachines.filter(x => x !== id);
     }
-    updateSelectionForm();
+    selInput.value = selectedMachines.join(", ");
+    cntInput.value = selectedMachines.length;
   });
 
-  // 3. Cập nhật ô hiển thị máy đã chọn và tổng số máy
-  function updateSelectionForm() {
-    selectedInput.value = selectedMachines.join(", ");
-    countInput.value = selectedMachines.length;
-  }
-
-  // 4. Tải danh sách lịch đã lưu từ Google Sheet
-  function loadRecords() {
-    google.script.run
-      .withSuccessHandler(renderScheduleList)
-      .getRecords();
-  }
-
-  // 5. Hiển thị danh sách lên lịch
-  function renderScheduleList(records) {
+  // Hiển thị danh sách lịch từ localStorage
+  function renderList() {
     scheduleList.innerHTML = "";
     if (records.length === 0) {
       scheduleList.innerHTML = "<li>Chưa có lịch nào.</li>";
@@ -57,41 +45,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     records.forEach(r => {
       const li = document.createElement("li");
-      li.textContent = `${r.Timestamp} – ${r.Machines} – ${r.Status} – ${r.Schedule}`;
+      li.textContent = `${r.timestamp} – ${r.machines} – ${r.status} – ${r.schedule}`;
       scheduleList.appendChild(li);
     });
   }
 
-  // 6. Xử lý submit form: lưu lên Google Sheet
+  // Xử lý submit form
   form.addEventListener("submit", e => {
     e.preventDefault();
     if (selectedMachines.length === 0) {
       alert("Vui lòng chọn ít nhất một máy!");
       return;
     }
-    const data = {
-      machines: selectedMachines.join(", "),
-      status:   statusSelect.value,
-      schedule: scheduleInput.value
+    const rec = {
+      timestamp: new Date().toLocaleString(),
+      machines:  selectedMachines.join(", "),
+      status:    statusSelect.value,
+      schedule:  scheduleInput.value.replace("T", " ")
     };
-    google.script.run
-      .withSuccessHandler(res => {
-        if (res.status === "success") {
-          alert("✅ Đã lưu lịch bảo trì!");
-          // reset lựa chọn
-          selectedMachines = [];
-          document.querySelectorAll(".machine.selected")
-            .forEach(el => el.classList.remove("selected"));
-          updateSelectionForm();
-          form.reset();
-          loadRecords();
-        }
-      })
-      .submitRecord(data);
+    records.push(rec);
+    localStorage.setItem("records", JSON.stringify(records));
+
+    // reset và cập nhật UI
+    selectedMachines = [];
+    roomsDiv.querySelectorAll(".machine.selected")
+      .forEach(el => el.classList.remove("selected"));
+    selInput.value = "";
+    cntInput.value = "";
+    form.reset();
+    renderList();
   });
 
-  // Chạy lần đầu
-  updateSelectionForm();
-  loadRecords();
-});
+  // Xuất file CSV
+  exportBtn.addEventListener("click", () => {
+    if (records.length === 0) {
+      alert("Không có dữ liệu để xuất.");
+      return;
+    }
+    const header = ["Timestamp", "Machines", "Status", "Schedule"];
+    const rows = records.map(r =>
+      [r.timestamp, r.machines, r.status, r.schedule]
+        .map(field => `"${field.replace(/"/g, '""')}"`)
+        .join(",")
+    );
+    const csv = [header.join(","), ...rows].join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `maintenance_records_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
 
+  // Khởi chạy
+  renderList();
+});
